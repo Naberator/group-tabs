@@ -1,0 +1,37 @@
+{
+  "name": "Group Tabs",
+  "description": "Group tabs by domain",
+  "version": "1.0",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "tabGroups"
+  ],
+  "action": {
+    "default_icon": {
+      "16": "/images/icon16.jpg",
+      "32": "/images/icon32.jpg",
+      "48": "/images/icon48.jpg",
+      "128": "/images/icon128.jpg"
+    }
+  },
+  "icons": {
+      "16": "/images/icon16.jpg",
+      "32": "/images/icon32.jpg",
+      "48": "/images/icon48.jpg",
+      "128": "/images/icon128.jpg"
+  },
+  "commands": {
+    "group-tabs": {
+      "suggested_key": {
+        "default": "Ctrl+G",
+        "mac": "MacCtrl+G"
+      },
+      "description": "Groups tabs by domain!"
+    }
+  }
+}
