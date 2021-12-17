@@ -46,8 +46,8 @@ function getDomain(url) {
 async function changeGroupName(groupId, domain) {
    const updateProperties = {};
    const startIndex = domain.indexOf("www.");
-   updateProperties['title'] = startIndex === -1 ? domain : domain.substring(startIndex);
-
+   updateProperties.title = startIndex === -1 ? domain : domain.substring(startIndex);
+   
    await chrome.tabGroups.update(
        groupId,
        updateProperties,
