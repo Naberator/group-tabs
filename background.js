@@ -47,7 +47,7 @@ async function changeGroupName(groupId, domain) {
    const updateProperties = {};
    const startIndex = domain.indexOf("www.");
    updateProperties.title = startIndex === -1 ? domain : domain.substring(startIndex);
-   
+
    await chrome.tabGroups.update(
        groupId,
        updateProperties,
@@ -58,7 +58,6 @@ async function changeGroupName(groupId, domain) {
 }
 
 chrome.commands.onCommand.addListener(async (command) => {
-    console.log(`entered listener with ${command}`);
     if ('group-tabs' !== command) {
         return;
     }
@@ -88,9 +87,9 @@ chrome.commands.onCommand.addListener(async (command) => {
 
         if (groupId) {
             options.groupId = groupId;
-            chrome.tabs.group(options);
+            await chrome.tabs.group(options);
         } else {
-            chrome.tabs.group(options, (groupId) => changeGroupName(groupId, domain));
+            await chrome.tabs.group(options, (groupId) => changeGroupName(groupId, domain));
         }
     }
 });
