@@ -13,20 +13,6 @@ function getTabGroupsMap(tabGroups) {
     return map;
 }
 
-function moveAllGroups(tabGroups, index) {
-    if (!tabGroups || tabGroups < 1) {
-        return;
-    }
-
-    const moveProperties = {
-        index: index
-    };
-
-    for (const group of tabGroups) {
-        chrome.tabGroups.move(group.id, moveProperties);
-    }
-}
-
 async function getAllFreeTabs() {
     const queryInfo = {
         groupId: chrome.tabGroups.TAB_GROUP_ID_NONE
@@ -35,7 +21,7 @@ async function getAllFreeTabs() {
     return chrome.tabs.query(queryInfo);
 }
 
-const domainRegEx = /\/\/(\w*?\.\w+).*/i;
+const domainRegEx = /\/\/(\w*\.?\w+)\..*/i;
 function getDomain(url) {
     const matches = url.match(domainRegEx);
     const result = (matches && matches.length > 1) ? matches[1] : "unknown";
@@ -43,32 +29,17 @@ function getDomain(url) {
     return result // TODO gotta be a finer way
 }
 
+const www = "www.";
 async function changeGroupName(groupId, domain) {
    const updateProperties = {};
-   const startIndex = domain.indexOf("www.");
-   updateProperties.title = startIndex === -1 ? domain : domain.substring(startIndex);
+   const startIndex = domain.indexOf(www);
+   updateProperties.title = startIndex === -1 ? domain : domain.substring(startIndex + www.length);
 
-   await chrome.tabGroups.update(
-       groupId,
-       updateProperties,
-       (groupId) => {
-           console.log(`Created group: ${groupId}`)
-       }
-   );
+   return chrome.tabGroups.update(groupId, updateProperties);
 }
 
-chrome.commands.onCommand.addListener(async (command) => {
-    if ('group-tabs' !== command) {
-        return;
-    }
-
-    const tabGroups = await getTabGroups();
-    const tabGroupsMap = getTabGroupsMap(tabGroups);
-    moveAllGroups(tabGroups, -1);
-
-    const tabs = await getAllFreeTabs();
+function getTabsByDomainMap (tabs) {
     const freeTabsByDomainMap = {};
-
     for (const tab of tabs) {
         const domain = getDomain(tab.url);
         if (!freeTabsByDomainMap[domain]) {
@@ -80,16 +51,32 @@ chrome.commands.onCommand.addListener(async (command) => {
         freeTabsByDomainMap[domain].tabIds.push(tab.id);
     }
 
-    for (const domain of Object.keys(freeTabsByDomainMap)) {
+    return freeTabsByDomainMap;
+}
+
+chrome.commands.onCommand.addListener(async (command) => {
+    if ('group-tabs' !== command) {
+        return;
+    }
+
+    const tabGroups = await getTabGroups();
+    const tabGroupsMap = getTabGroupsMap(tabGroups);
+
+    const tabs = await getAllFreeTabs();
+    const freeTabsByDomainMap = getTabsByDomainMap(tabs);
+
+    const domains = Object.keys(freeTabsByDomainMap)
+    for (const domain of domains) {
         const options = {};
         const groupId = tabGroupsMap[domain];
         options.tabIds = freeTabsByDomainMap[domain].tabIds;
 
         if (groupId) {
             options.groupId = groupId;
-            await chrome.tabs.group(options);
+            chrome.tabs.group(options);
         } else {
-            await chrome.tabs.group(options, (groupId) => changeGroupName(groupId, domain));
+            const newGroupId = await chrome.tabs.group(options);
+            await changeGroupName(newGroupId, domain);
         }
     }
 });
