@@ -2,31 +2,12 @@ async function getTabGroups() {
      return chrome.tabGroups.query({});
 }
 
-function getTabGroupsMap(tabGroups) {
-    const map = {};
-    for(const group in tabGroups) {
-        map[group.title] = {
-            id: group.id
-        };
-    }
-
-    return map;
-}
-
 async function getAllFreeTabs() {
     const queryInfo = {
         groupId: chrome.tabGroups.TAB_GROUP_ID_NONE
     };
 
     return chrome.tabs.query(queryInfo);
-}
-
-const domainRegEx = /\/\/(\w*\.?\w+)\..*/i;
-function getDomain(url) {
-    const matches = url.match(domainRegEx);
-    const result = (matches && matches.length > 1) ? matches[1] : "unknown";
-
-    return result // TODO gotta be a finer way
 }
 
 const www = "www.";
@@ -36,6 +17,16 @@ async function changeGroupName(groupId, domain) {
    updateProperties.title = startIndex === -1 ? domain : domain.substring(startIndex + www.length);
 
    return chrome.tabGroups.update(groupId, updateProperties);
+}
+
+function getTabGroupsMap(tabGroups) {
+    return tabGroups.reduce((map, group) => (map[group.title] = group.id,  map), {});
+}
+
+const domainRegEx = /\/\/(\w*\.?\w+)\..*/i;
+function getDomain(url) {
+    const matches = url.match(domainRegEx);
+    return (matches && matches.length > 1) ? matches[1] : "unknown" // TODO gotta be a finer way
 }
 
 function getTabsByDomainMap (tabs) {
