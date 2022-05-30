@@ -13,11 +13,12 @@ async function getFreeTabs() {
 
 const www = "www.";
 async function changeGroupName(groupId, domain) {
-   const updateProperties = {};
-   const startIndex = domain.indexOf(www);
-   updateProperties.title = startIndex === -1 ? domain : domain.substring(startIndex + www.length);
-
-   return chrome.tabGroups.update(groupId, updateProperties);
+    const updateProperties = {};
+    const startIndex = domain.indexOf(www);
+    updateProperties.title = startIndex === -1 ? domain : domain.substring(startIndex + www.length);
+    updateProperties.collapsed = true;
+    
+    return chrome.tabGroups.update(groupId, updateProperties);
 }
 
 async function getTabGroupsMap() {
@@ -28,7 +29,7 @@ async function getTabGroupsMap() {
 const domainRegEx = /\/\/(\w*\.?\w+)\..*/i;
 function getDomain(url) {
     const matches = url.match(domainRegEx);
-    return (matches && matches.length > 1) ? matches[1] : "unknown";
+    return (matches && matches.length > 1) ? matches[1] : "unknown"; 
 }
 
 function getTabsByDomainMap (tabs) {
