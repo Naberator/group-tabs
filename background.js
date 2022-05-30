@@ -20,7 +20,7 @@ async function changeGroupName(groupId, domain) {
    return chrome.tabGroups.update(groupId, updateProperties);
 }
 
-async function getTabGroupsMap(tabGroups) {
+async function getTabGroupsMap() {
     const tabGroups = await getTabGroups();
     return tabGroups.reduce((map, group) => (map[group.title] = group.id,  map), {});
 }
