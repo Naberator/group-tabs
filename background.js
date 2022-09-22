@@ -68,14 +68,16 @@ async function groupTabs () {
             await changeGroupName(newGroupId, domain);
         }
     }
-}
+} 
+
+const onClickedListener = async () => { await groupTabs(); };
 
 chrome.commands.onCommand.addListener(async (command) => {
     if ('group-tabs' !== command) {
         return;
     }
 
-    groupTabs();
+    await groupTabs();
 });
 
-chrome.browserAction.onClicked.addListener(groupTabs);
+chrome.action.onClicked.addListener(onClickedListener);
