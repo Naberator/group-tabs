@@ -53,6 +53,12 @@ chrome.commands.onCommand.addListener(async (command) => {
         return;
     }
 
+    groupTabs();
+});
+
+chrome.browserAction.onClicked.addListener(groupTabs);
+
+function groupTabs () {
     const tabGroupsMap = getTabGroupsMap();
 
     const tabs = await getFreeTabs();
@@ -72,4 +78,4 @@ chrome.commands.onCommand.addListener(async (command) => {
             await changeGroupName(newGroupId, domain);
         }
     }
-});
+}
