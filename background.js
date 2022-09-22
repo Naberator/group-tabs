@@ -48,17 +48,7 @@ function getTabsByDomainMap (tabs) {
     return freeTabsByDomainMap;
 }
 
-chrome.commands.onCommand.addListener(async (command) => {
-    if ('group-tabs' !== command) {
-        return;
-    }
-
-    groupTabs();
-});
-
-chrome.browserAction.onClicked.addListener(groupTabs);
-
-function groupTabs () {
+async function groupTabs () {
     const tabGroupsMap = getTabGroupsMap();
 
     const tabs = await getFreeTabs();
@@ -79,3 +69,13 @@ function groupTabs () {
         }
     }
 }
+
+chrome.commands.onCommand.addListener(async (command) => {
+    if ('group-tabs' !== command) {
+        return;
+    }
+
+    groupTabs();
+});
+
+chrome.browserAction.onClicked.addListener(groupTabs);
