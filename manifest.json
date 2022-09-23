@@ -27,7 +27,7 @@
   "commands": {
     "group-tabs": {
       "suggested_key": {
-        "default": "Ctrl+G",
+        "default": "Alt+G",
         "mac": "MacCtrl+G"
       },
       "description": "Groups tabs by domain!"
