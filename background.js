@@ -49,7 +49,7 @@ function getTabsByDomainMap (tabs) {
 }
 
 async function groupTabs () {
-    const tabGroupsMap = getTabGroupsMap();
+    const tabGroupsMap = await getTabGroupsMap();
 
     const tabs = await getFreeTabs();
     const freeTabsByDomainMap = getTabsByDomainMap(tabs);
